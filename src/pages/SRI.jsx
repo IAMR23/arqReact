@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export default function ListarFacturas() {
   const [facturas, setFacturas] = useState([]);
@@ -30,6 +31,11 @@ export default function ListarFacturas() {
         total: facturaData.monto + facturaData.monto * 0.12,
         estado: "Aprobado",
       };
+      Swal.fire({
+        title: "Buen trabajo!",
+        text: "Factura Aprobada!",
+        icon: "success",
+      });
 
       console.log("Enviando del SRI a la cuenta", facturaSRI);
 
@@ -57,22 +63,55 @@ export default function ListarFacturas() {
   };
 
   return (
-    <div>
-      <h2>SRI</h2>
-      {facturas.length === 0 ? (
-        <p>No hay facturas registradas.</p>
-      ) : (
-        <ul>
-          {facturas.map((factura) => (
-            <li key={factura.id}>
-              <p>Cliente: {factura.cliente}</p>
-              <p>Monto: {factura.monto}</p>
-              <p>Estado: {factura.estado}</p>
-              <button onClick={() => enviarSF(factura)}>Aprobar</button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <>
+      <div className="min-h-screen bg-gray-900 text-white p-8">
+        <h2 className="text-3xl font-bold text-center mb-8 text-purple-400">
+          SRI
+        </h2>
+        {facturas.length === 0 ? (
+          <p className="text-center text-gray-400">
+            No hay facturas registradas.
+          </p>
+        ) : (
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {facturas.map((factura) => (
+              <li
+                key={factura.id}
+                className="bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow border border-gray-700"
+              >
+                <p className="text-gray-300">
+                  <strong className="text-purple-400">Cliente:</strong>{" "}
+                  {factura.cliente}
+                </p>
+                <p className="text-gray-300 mt-2">
+                  <strong className="text-purple-400">Monto:</strong>{" "}
+                  {factura.monto}
+                </p>
+                <p className="text-gray-300 mt-2">
+                  <strong className="text-purple-400">Estado:</strong>{" "}
+                  <span
+                    className={`font-semibold ${
+                      factura.estado === "Aprobada"
+                        ? "text-green-400"
+                        : factura.estado === "Pendiente"
+                        ? "text-yellow-400"
+                        : "text-red-400"
+                    }`}
+                  >
+                    {factura.estado}
+                  </span>
+                </p>
+                <button
+                  onClick={() => enviarSF(factura)}
+                  className="mt-4 w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Aprobar
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
   );
 }

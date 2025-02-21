@@ -12,7 +12,7 @@ function App() {
         <Routes>
           <Route path="/erp" element={<ERP />} />
           <Route path="/sri" element={<SRI />} />
-          <Route path="/sistemafinanciero" element={<SF />} />
+          <Route path="/cuentas" element={<SF />} />
           <Route path="/cuenta/:id" element={<VerCuenta />} />
           {/*    <Route path="/factura" element={<ProductList />} />
           <Route path="/products/create" element={<ProductForm />} />

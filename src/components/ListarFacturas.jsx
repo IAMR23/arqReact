@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
 export default function ListarFacturas() {
   const [facturas, setFacturas] = useState([]); // Estado para almacenar las facturas
-  const [error, setError] = useState(null); // Para manejar posibles errores
+  const [error, setError] = useState(null);
+  const [envio, setEnvio] = useState(false);
 
   // Función para obtener las facturas desde el backend
   const obtenerFacturas = async () => {
@@ -86,36 +88,54 @@ export default function ListarFacturas() {
 
       const data = await response.json();
       console.log("Factura enviada al SRI exitosamente:", data);
+
+      Swal.fire({
+        title: "Enviado!",
+        text: "Factura enviada al SRI exitosamente:!",
+        icon: "success",
+      });
     } catch (error) {
       console.error("Error al registrar factura:", error);
     }
   };
 
   return (
-    <div>
-      <h2>Facturas Registradas</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}{" "}
-      <ul>
-        {facturas.length > 0 ? (
-          facturas.map((factura) => (
-            <li key={factura.id}>
-              <p>
-                <strong>Cliente:</strong> {factura.cliente}
+    <>
+      <div className="flex justify-center items-center min-h-screen bg-gray-600 p-5">
+        <div className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold mb-4 text-center text-black">
+            Facturas Registradas
+          </h2>
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {facturas.length > 0 ? (
+              facturas.map((factura) => (
+                <li
+                  key={factura.id}
+                  className="bg-gray-50 p-4 rounded-lg shadow-sm"
+                >
+                  <p className="text-gray-700">
+                    <strong>Cliente:</strong> {factura.cliente}
+                  </p>
+                  <p className="text-gray-700">
+                    <strong>Monto:</strong> {factura.monto}
+                  </p>
+                  <button
+                    onClick={() => enviarAlSRI(factura)}
+                    className="mt-3 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+                  >
+                    Enviar al SRI
+                  </button>
+                </li>
+              ))
+            ) : (
+              <p className="text-gray-500 text-center col-span-full">
+                No hay facturas registradas.
               </p>
-              <p>
-                <strong>Monto:</strong> {factura.monto}
-              </p>
-
-              {/* Botón para enviar la factura al SRI */}
-              <button onClick={() => enviarAlSRI(factura)}>
-                Enviar al SRI
-              </button>
-            </li>
-          ))
-        ) : (
-          <p>No hay facturas registradas.</p> // Mensaje si no hay facturas
-        )}
-      </ul>
-    </div>
+            )}
+          </ul>
+        </div>
+      </div>
+    </>
   );
 }
