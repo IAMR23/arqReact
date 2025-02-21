@@ -58,27 +58,15 @@ export default function ListarFacturas() {
   // Función para enviar una factura al SRI
 
   const enviarAlSRI = async (facturaData) => {
-    console.log("Enviando factura al SRI:", facturaData);
-
     try {
-      // Primero, obtenemos la información completa de la factura usando el ID
-      const facturaId = facturaData; // Suponiendo que facturaData tiene un campo 'id'
+      const facturaSRI = {
+        cliente: facturaData.cliente,
+        monto: facturaData.monto,
+        estado: facturaData.estado,
+        impuestos: facturaData.impuestos || 0, // Si no existe, enviar 0 como valor por defecto
+      };
 
-      const responseFactura = await fetch(
-        `http://127.0.0.1:7000/facturas/${facturaId}`,
-        {
-          method: "GET", // Realizamos una solicitud GET para obtener los datos completos
-        }
-      );
-
-      if (!responseFactura.ok) {
-        const errorData = await responseFactura.json(); // Lee el cuerpo de la respuesta
-        console.error("Detalles del error al obtener la factura:", errorData);
-        throw new Error("Error al obtener la factura");
-      }
-
-      const facturaCompleta = await responseFactura.json();
-      console.log("Factura completa obtenida:", facturaCompleta);
+      console.log("Enviando factura al SRI...", facturaSRI);
 
       // Ahora que tenemos los datos completos, enviamos la factura al SRI
       const response = await fetch("http://127.0.0.1:7000/sri/facturas", {
@@ -86,8 +74,9 @@ export default function ListarFacturas() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(facturaCompleta), // Enviamos la factura completa al SRI
+        body: JSON.stringify(facturaSRI), // Enviamos la factura completa al SRI
       });
+      console.log("Respuesta del SRI:", response);
 
       if (!response.ok) {
         const errorData = await response.json(); // Lee el cuerpo de la respuesta
@@ -116,15 +105,9 @@ export default function ListarFacturas() {
               <p>
                 <strong>Monto:</strong> {factura.monto}
               </p>
-              <p>
-                <strong>Impuestos:</strong> {factura.impuestos}
-              </p>
-              <p>
-                <strong>Estado:</strong> {factura.estado}
-              </p>
 
               {/* Botón para enviar la factura al SRI */}
-              <button onClick={() => enviarAlSRI(factura.id)}>
+              <button onClick={() => enviarAlSRI(factura)}>
                 Enviar al SRI
               </button>
             </li>

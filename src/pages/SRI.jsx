@@ -23,20 +23,52 @@ export default function ListarFacturas() {
     fetchFacturas();
   }, []);
 
+  const enviarSF = async (facturaData) => {
+    try {
+      const facturaSRI = {
+        cliente: facturaData.cliente,
+        total: facturaData.monto + facturaData.monto * 0.12,
+        estado: "Aprobado",
+      };
+
+      console.log("Enviando del SRI a la cuenta", facturaSRI);
+
+      // Ahora que tenemos los datos completos, enviamos la factura al SRI
+      const response = await fetch("http://127.0.0.1:7000/cuenta", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(facturaSRI), // Enviamos la factura completa al SRI
+      });
+      console.log("Respuesta del SF:", response);
+
+      if (!response.ok) {
+        const errorData = await response.json(); // Lee el cuerpo de la respuesta
+        console.error("Detalles del error:", errorData);
+        throw new Error("Error al registrar la cuenta");
+      }
+
+      const data = await response.json();
+      console.log("Cuenta creada exitosamente:", data);
+    } catch (error) {
+      console.error("Error al registrar la cuenta:", error);
+    }
+  };
+
   return (
     <div>
-      <h2>Facturas Registradas</h2>
+      <h2>SRI</h2>
       {facturas.length === 0 ? (
         <p>No hay facturas registradas.</p>
       ) : (
         <ul>
           {facturas.map((factura) => (
             <li key={factura.id}>
-              <p>Id: {factura.id}</p>
               <p>Cliente: {factura.cliente}</p>
               <p>Monto: {factura.monto}</p>
-              <p>Impuestos: {factura.impuestos}</p>
               <p>Estado: {factura.estado}</p>
+              <button onClick={() => enviarSF(factura)}>Aprobar</button>
             </li>
           ))}
         </ul>

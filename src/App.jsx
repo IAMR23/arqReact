@@ -1,26 +1,19 @@
-import { useState } from "react";
 import "./App.css";
+import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import Home from "./pages/SF";
-import CrearFactura from "./pages/ERP";
-import Listar from "./pages/SRI";
 import ERP from "./pages/ERP";
 import SRI from "./pages/SRI";
 import SF from "./pages/SF";
-
+import VerCuenta from "./components/VerCuenta";
 function App() {
   return (
     <div>
-      <nav className="navbar navbar-expand navbar-dark bg-dark p-4">
-        <Link to={"/"} className="navbar-brand">
-          Ininio
-        </Link>
-      </nav>
       <div className="container mt-3">
         <Routes>
           <Route path="/erp" element={<ERP />} />
           <Route path="/sri" element={<SRI />} />
           <Route path="/sistemafinanciero" element={<SF />} />
+          <Route path="/cuenta/:id" element={<VerCuenta />} />
           {/*    <Route path="/factura" element={<ProductList />} />
           <Route path="/products/create" element={<ProductForm />} />
           <Route path="/products/retrieve/:id" element={<ProductCard />} />

@@ -6,9 +6,7 @@ export default function ERP() {
   const [formData, setFormData] = useState({
     cliente: "Ismael",
     monto: 150,
-    impuestos: 0.12,
     estado: "pendiente",
-    metodo_pago: "Ninguno",
   });
   const [mensaje, setMensaje] = useState("");
 
@@ -26,8 +24,8 @@ export default function ERP() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        //"http://localhost:8081/api/facturas",
-        "http://localhost:7000/facturas",
+        "http://localhost:8081/api/facturas",
+        //"http://localhost:7000/facturas",
         formData
       );
       setMensaje(`Factura creada exitosamente con ID: ${response.data.id}`);
@@ -40,10 +38,13 @@ export default function ERP() {
 
   return (
     <div>
-      <h1>Crear Nueva Factura</h1>
-      <form onSubmit={handleSubmit}>
+      <h1>Sistema de Facturacion</h1>
+      <form
+        className="text-center flex flex-col text-3xl"
+        onSubmit={handleSubmit}
+      >
         <div>
-          <label>Cliente:</label>
+          <label className="text-2xl text-red-500">Cliente:</label>
           <input
             type="text"
             name="cliente"
@@ -63,26 +64,14 @@ export default function ERP() {
           />
         </div>
         <div>
-          <label>Impuestos:</label>
+          <label>Estado:</label>
           <input
-            type="number"
-            name="impuestos"
-            value={formData.impuestos}
+            type="text"
+            name="estado"
+            value={formData.estado}
             onChange={handleChange}
             required
           />
-        </div>
-        <div>
-          <label>Método de Pago:</label>
-          <select
-            name="metodo_pago"
-            value={formData.metodo_pago}
-            onChange={handleChange}
-          >
-            <option value="Ninguno">Ninguno</option>
-            <option value="Tarjeta">Tarjeta</option>
-            <option value="Transferencia">Transferencia</option>
-          </select>
         </div>
         <button type="submit">Crear Factura</button>
       </form>

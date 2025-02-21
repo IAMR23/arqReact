@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function SF() {
   const [cuentasPorCobrar, setCuentasPorCobrar] = useState([]);
@@ -9,11 +10,10 @@ export default function SF() {
   // Función para obtener las cuentas por cobrar
   const obtenerCuentasPorCobrar = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:7000/cuentas-por-cobrar"
-      );
+      const response = await axios.get("http://localhost:7000/cuentas");
       setCuentasPorCobrar(response.data);
       setLoading(false);
+      console.log(response.data);
     } catch (error) {
       setError("Error al obtener las cuentas por cobrar");
       setLoading(false);
@@ -40,10 +40,11 @@ export default function SF() {
       {cuentasPorCobrar.length > 0 ? (
         <ul>
           {cuentasPorCobrar.map((cuenta, index) => (
-            <li key={index}>
-              <strong>Factura ID:</strong> {cuenta.factura_id} <br />
-              <strong>Monto Pendiente:</strong> {cuenta.monto_pendiente} <br />
+            <li key={cuenta.id}>
+              <strong>Cliente:</strong> {cuenta.cliente} <br />
+              <strong>Total:</strong> {cuenta.total} <br />
               <strong>Estado:</strong> {cuenta.estado}
+              <Link to={`/cuenta/${cuenta.id}`}>Ver cuenta</Link>
             </li>
           ))}
         </ul>
