@@ -56,37 +56,49 @@ export default function ListarFacturas() {
   };
 
   // Función para enviar una factura al SRI
-  const enviarAlSRI = async (facturaId) => {
-    try {
-      // Buscar la factura por ID
-      const factura = facturas.find((f) => f.id === facturaId);
 
-      if (!factura) {
-        setError("Factura no encontrada");
-        return;
+  const enviarAlSRI = async (facturaData) => {
+    console.log("Enviando factura al SRI:", facturaData);
+
+    try {
+      // Primero, obtenemos la información completa de la factura usando el ID
+      const facturaId = facturaData; // Suponiendo que facturaData tiene un campo 'id'
+
+      const responseFactura = await fetch(
+        `http://127.0.0.1:7000/facturas/${facturaId}`,
+        {
+          method: "GET", // Realizamos una solicitud GET para obtener los datos completos
+        }
+      );
+
+      if (!responseFactura.ok) {
+        const errorData = await responseFactura.json(); // Lee el cuerpo de la respuesta
+        console.error("Detalles del error al obtener la factura:", errorData);
+        throw new Error("Error al obtener la factura");
       }
 
-      const response = await fetch("http://127.0.0.1:7000/sri/impuestos", {
+      const facturaCompleta = await responseFactura.json();
+      console.log("Factura completa obtenida:", facturaCompleta);
+
+      // Ahora que tenemos los datos completos, enviamos la factura al SRI
+      const response = await fetch("http://127.0.0.1:7000/sri/facturas", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          id: factura.id,
-          cliente: factura.cliente,
-          monto: factura.monto,
-          impuestos: factura.impuestos,
-        }),
+        body: JSON.stringify(facturaCompleta), // Enviamos la factura completa al SRI
       });
 
       if (!response.ok) {
-        throw new Error("Error al enviar la factura al SRI");
+        const errorData = await response.json(); // Lee el cuerpo de la respuesta
+        console.error("Detalles del error:", errorData);
+        throw new Error("Error al registrar la factura");
       }
 
-      const data = await response.json(); // Procesar la respuesta
-      alert("Factura enviada al SRI exitosamente: " + data.estado); // Mostrar mensaje de éxito
+      const data = await response.json();
+      console.log("Factura enviada al SRI exitosamente:", data);
     } catch (error) {
-      setError(error.message); // Manejo de errores
+      console.error("Error al registrar factura:", error);
     }
   };
 
@@ -109,9 +121,6 @@ export default function ListarFacturas() {
               </p>
               <p>
                 <strong>Estado:</strong> {factura.estado}
-              </p>
-              <p>
-                <strong>Método de Pago:</strong> {factura.metodo_pago}
               </p>
 
               {/* Botón para enviar la factura al SRI */}
