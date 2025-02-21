@@ -21,12 +21,21 @@ export default function ERP() {
 
   // Manejar el envío del formulario
   const handleSubmit = async (e) => {
+    console.log(formData);
     e.preventDefault();
+    console.log("cp1", formData);
+
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/facturas",
-        //"http://localhost:7000/facturas",
-        formData
+        //"http://127.0.0.1:8081/api/facturas",
+
+        "http://localhost:7000/facturas",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json", // Especificamos que el contenido es JSON
+          },
+        }
       );
       setMensaje(`Factura creada exitosamente con ID: ${response.data.id}`);
       console.log(response.data);
